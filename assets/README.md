@@ -15,6 +15,8 @@
 | `stats_demo.json` | 看板数据源：一次模拟 Agent 会话的真实统计 | `gen_dashboard.py` 自动生成 |
 | `dashboard_preview.png` | 看板截图（可直接贴 PPT/报告） | 浏览器截取 |
 | `gui_tools.png` / `gui_stats.png` / `gui_mcp.png` | GUI 三个页签的实测截图 | 浏览器截取 |
+| `archify/group4-pipeline.html` | 交互式五组流水线图（用开源技能 [archify](https://github.com/tt-a1i/archify) 生成：深浅主题/缩放/搜索/演示模式/导出，双击即开） | 改 `archify/*.architecture.json` 后用 archify 重渲染 |
+| `archify/group4-internal.html` | 交互式组4内部模块图（12 模块 + 12 条数据流：Mock 双轨/Registry/Skills/MCP/Stats/GUI） | 同上 |
 
 ## PNG 导出方式
 

@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "组4 内部设计：模块功能与数据流向",
+    "locale": "zh-CN",
+    "output": "group4-internal.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "g3",
+      "type": "external",
+      "label": "组3 AppAgent",
+      "sublabel": "真实调用方（import 本模块）",
+      "pos": [
+        40,
+        150
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "gui",
+      "type": "frontend",
+      "label": "GUI 操作台",
+      "sublabel": "gui/server.py + 网页前端",
+      "pos": [
+        40,
+        400
+      ],
+      "size": [
+        160,
+        64
+      ]
+    },
+    {
+      "id": "mcp",
+      "type": "messagebus",
+      "label": "MCPConnector",
+      "sublabel": "3 个 Mock 工具 · JSON-RPC 2.0",
+      "pos": [
+        300,
+        60
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "mockreg",
+      "type": "backend",
+      "label": "MockToolRegistry",
+      "sublabel": "返回 [Mock] 假结果",
+      "pos": [
+        300,
+        270
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "mocks",
+      "type": "backend",
+      "label": "MockSkillLibrary",
+      "sublabel": "同接口 · 不碰真实 OS",
+      "pos": [
+        300,
+        480
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "registry",
+      "type": "backend",
+      "label": "ToolRegistry",
+      "sublabel": "调度中枢：权限·黑名单·保护路径",
+      "pos": [
+        590,
+        140
+      ],
+      "size": [
+        190,
+        76
+      ]
+    },
+    {
+      "id": "skills",
+      "type": "backend",
+      "label": "SkillLibrary",
+      "sublabel": "8 个技能：多工具编排",
+      "pos": [
+        590,
+        330
+      ],
+      "size": [
+        190,
+        64
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "default_tools",
+      "sublabel": "8 个 OS 工具实现",
+      "pos": [
+        830,
+        60
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "os",
+      "type": "database",
+      "label": "Linux 文件系统 / Shell",
+      "sublabel": "真实执行",
+      "pos": [
+        830,
+        270
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "stats",
+      "type": "database",
+      "label": "ToolStats / Buffered",
+      "sublabel": "每次调用记账 · 环形缓冲",
+      "pos": [
+        830,
+        480
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "g5",
+      "type": "security",
+      "label": "组5 Coordinator",
+      "sublabel": "只读 JSON · 无需 import",
+      "pos": [
+        1060,
+        270
+      ],
+      "size": [
+        160,
+        60
+      ]
+    },
+    {
+      "id": "statsjson",
+      "type": "messagebus",
+      "label": "stats.json",
+      "sublabel": "原子落盘 · 审计数据源",
+      "pos": [
+        1060,
+        480
+      ],
+      "size": [
+        160,
+        60
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "from": "g3",
+      "to": "mockreg",
+      "label": "并行开发 / 单测",
+      "variant": "dashed"
+    },
+    {
+      "id": "c2",
+      "from": "g3",
+      "to": "registry",
+      "label": "registry.call()",
+      "labelDx": 16
+    },
+    {
+      "id": "c2b",
+      "from": "g3",
+      "to": "mocks",
+      "label": "技能 Mock",
+      "variant": "dashed",
+      "fromSide": "left",
+      "via": [
+        [
+          20,
+          182
+        ],
+        [
+          20,
+          512
+        ]
+      ]
+    },
+    {
+      "id": "c3",
+      "from": "gui",
+      "to": "registry",
+      "label": "POST /api/call"
+    },
+    {
+      "id": "c4",
+      "from": "gui",
+      "to": "skills",
+      "label": "POST /api/skill"
+    },
+    {
+      "id": "c5",
+      "from": "registry",
+      "to": "tools",
+      "label": "解包 **params",
+      "labelAt": [
+        734,
+        250
+      ]
+    },
+    {
+      "id": "c6",
+      "from": "skills",
+      "to": "registry",
+      "label": "内部经 registry 调工具",
+      "variant": "dashed"
+    },
+    {
+      "id": "c7",
+      "from": "mcp",
+      "to": "registry",
+      "label": "register_mock_tools",
+      "variant": "dashed"
+    },
+    {
+      "id": "c8",
+      "from": "registry",
+      "to": "stats",
+      "label": "record()",
+      "fromSide": "right"
+    },
+    {
+      "id": "c9",
+      "from": "stats",
+      "to": "statsjson",
+      "label": "原子落盘"
+    },
+    {
+      "id": "c10",
+      "from": "statsjson",
+      "to": "g5",
+      "label": "纯 JSON 审计"
+    },
+    {
+      "id": "c11",
+      "from": "tools",
+      "to": "os",
+      "label": "subprocess / shutil",
+      "labelDy": 26
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "统一契约",
+      "items": [
+        "返回永远是 ToolResult {success, result/error}",
+        "error 前缀分类：工具未注册 / 权限不足 / 参数错误 / 拒绝执行 / 受保护"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Mock 策略",
+      "items": [
+        "Week1 先交付 Mock，组3 从第一天就能开发",
+        "接口与真实 100% 一致，切换只改一行"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "统计与审计",
+      "items": [
+        "权限拦截发生在统计之前，不留调用记录",
+        "组5 纯 JSON 消费，与实现零耦合"
+      ]
+    }
+  ]
+}

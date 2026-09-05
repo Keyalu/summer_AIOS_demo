@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Linux Agentic OS：组4 Tools 模块在五组流水线中的位置",
+    "locale": "zh-CN",
+    "output": "group4-pipeline.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "g1",
+      "type": "external",
+      "label": "组1 HostAgent",
+      "sublabel": "解析用户意图",
+      "pos": [
+        40,
+        280
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "g2",
+      "type": "frontend",
+      "label": "组2 TaskPlanner",
+      "sublabel": "规划任务步骤",
+      "pos": [
+        260,
+        280
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "g3",
+      "type": "backend",
+      "label": "组3 AppAgent",
+      "sublabel": "执行代理",
+      "pos": [
+        480,
+        280
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "g4",
+      "type": "backend",
+      "label": "组4 Tools + OS Skills",
+      "sublabel": "本组：注册表·技能库·MCP",
+      "pos": [
+        700,
+        270
+      ],
+      "size": [
+        170,
+        82
+      ]
+    },
+    {
+      "id": "g5",
+      "type": "security",
+      "label": "组5 Coordinator",
+      "sublabel": "审计·安全·RAG",
+      "pos": [
+        990,
+        280
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "os",
+      "type": "database",
+      "label": "Linux 文件系统 / Shell",
+      "sublabel": "8 个工具真实执行",
+      "pos": [
+        700,
+        460
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "stats",
+      "type": "messagebus",
+      "label": "stats.json",
+      "sublabel": "调用统计 · 原子落盘",
+      "pos": [
+        990,
+        460
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "课程五组流水线（参考 MCP 协议思想，JSON-RPC 2.0）",
+      "wraps": [
+        "g1",
+        "g2",
+        "g3",
+        "g4",
+        "g5"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "intent",
+      "from": "g1",
+      "to": "g2",
+      "label": "intent_json"
+    },
+    {
+      "id": "plan",
+      "from": "g2",
+      "to": "g3",
+      "label": "plan_json"
+    },
+    {
+      "id": "call",
+      "from": "g3",
+      "to": "g4",
+      "label": "registry.call()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "audit",
+      "from": "g4",
+      "to": "g5",
+      "label": "ToolResult"
+    },
+    {
+      "id": "exec",
+      "from": "g4",
+      "to": "os",
+      "label": "调用",
+      "labelDy": 40,
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDx": -36
+    },
+    {
+      "id": "back",
+      "from": "os",
+      "to": "g4",
+      "label": "ToolResult",
+      "variant": "dashed",
+      "labelDy": -40,
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDx": 56
+    },
+    {
+      "id": "flush",
+      "from": "g4",
+      "to": "stats",
+      "label": "每 5 秒原子落盘",
+      "variant": "dashed"
+    },
+    {
+      "id": "consume",
+      "from": "stats",
+      "to": "g5",
+      "label": "纯 JSON 审计",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "三道闸门",
+      "items": [
+        "工具存在性 → 权限 rank 校验 → 危险命令黑名单",
+        "受保护路径全入口拦截 + 参数 schema 预检"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "高压实测",
+      "items": [
+        "万文件列目录 108.55s → 0.051s（2146×）",
+        "统计落盘 177.7×，查重 13.8×"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "对外契约",
+      "items": [
+        "组3：Mock 换真实，接口零改动",
+        "组5：只读 stats.json，无需 import 代码"
+      ]
+    }
+  ]
+}
