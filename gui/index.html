@@ -66,6 +66,24 @@ code{font-family:Consolas,monospace;font-size:11.5px;color:#475569;word-break:br
 .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:12.5px;color:var(--sub)}
 .empty{color:var(--sub);font-size:13px;padding:30px;text-align:center}
 .jsonrpc-flow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.flow{display:flex;align-items:center;gap:10px;margin-top:14px}
+.fbox{flex:1;border:1.5px solid var(--line);border-radius:11px;padding:10px 8px;text-align:center;
+  color:var(--sub);transition:all .35s;user-select:none}
+.fbox b{display:block;font-size:15px;color:var(--ink)}
+.fbox span{font-size:11px;line-height:1.5;display:block;margin-top:4px}
+.fbox.real{border-style:dashed}
+.fbox.lit{border-color:var(--blue);background:var(--blue-bg);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+.fbox.lit b{color:var(--blue)}
+.fbox.lit.real{border-color:var(--green);background:var(--green-bg)}
+.fbox.lit.real b{color:var(--green)}
+.farrow{color:var(--sub);font-size:18px;flex-shrink:0}
+.farrow.lit{color:var(--blue);font-weight:700}
+.verdict{flex-shrink:0;font-size:13px;font-weight:700;padding:6px 14px;border-radius:9px;display:none}
+.verdict.pass{background:var(--green-bg);color:var(--green);display:block}
+.verdict.fail{background:var(--red-bg);color:var(--red);display:block}
+.chip.esc{background:var(--amber-bg);color:var(--amber)}
+.chip.heal{background:var(--blue-bg);color:var(--blue)}
+tr.hl td{background:var(--amber-bg)}
 </style>
 </head>
 <body>
@@ -77,6 +95,7 @@ code{font-family:Consolas,monospace;font-size:11.5px;color:#475569;word-break:br
     <button data-p="skills">技能台</button>
     <button data-p="stats">统计看板</button>
     <button data-p="mcp">MCP · JSON-RPC</button>
+    <button data-p="pipe">全链路演示</button>
   </nav>
 </header>
 
@@ -130,6 +149,48 @@ code{font-family:Consolas,monospace;font-size:11.5px;color:#475569;word-break:br
         <div class="result ok" id="mcp-req" style="display:block;background:#fbfdff;border-color:var(--line)"></div></div>
       <div><h2 style="font-size:13px;color:var(--sub)">响应报文</h2>
         <div class="result" id="mcp-res"></div></div>
+    </div>
+  </div>
+</section>
+<!-- ============ 全链路演示 ============ -->
+<section class="page" id="page-pipe">
+  <div class="card" style="margin-bottom:16px">
+    <h2>五组全链路演示<span style="font-weight:400;font-size:12px;color:var(--sub)">　组1/2/3/5 为联调替身，组4 是真实模块</span></h2>
+    <div style="display:flex;gap:10px;margin:12px 0 4px">
+      <input id="pipe-text" style="flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit"
+        value="帮我把「demo_task」文件夹里的文件整理一下，顺便看看有没有重复文件，最后备个份">
+      <button class="go" id="pipe-run" onclick="runPipeline()">▶ 运行全链路</button>
+    </div>
+    <div class="flow" id="flow">
+      <div class="fbox" id="fb1"><b>组1</b><span>HostAgent<br>解析意图</span></div>
+      <div class="farrow">→</div>
+      <div class="fbox" id="fb2"><b>组2</b><span>TaskPlanner<br>规划步骤</span></div>
+      <div class="farrow">→</div>
+      <div class="fbox" id="fb3"><b>组3</b><span>AppAgent<br>执行计划</span></div>
+      <div class="farrow">→</div>
+      <div class="fbox real" id="fb4"><b>组4</b><span>Tools 真实模块<br>闸门放行 + 统计</span></div>
+      <div class="farrow">→</div>
+      <div class="fbox" id="fb5"><b>组5</b><span>Coordinator<br>纯 JSON 审计</span></div>
+      <div class="verdict" id="pipe-verdict"></div>
+    </div>
+    <div id="pipe-kpis" class="kpis" style="margin-top:14px"></div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1.2fr 1fr">
+    <div class="card">
+      <h2>组3 执行明细</h2>
+      <table style="margin-top:10px"><thead><tr><th>步</th><th>名称</th><th>身份</th><th>耗时</th><th>结果</th></tr></thead>
+      <tbody id="pipe-steps"><tr><td colspan="5" class="empty">点击「运行全链路」开始</td></tr></tbody></table>
+      <div id="pipe-events" style="margin-top:10px;font-size:12.5px"></div>
+    </div>
+    <div class="card">
+      <h2>中间产物（组间只传 JSON）</h2>
+      <div class="lvl" style="margin:10px 0" id="pipe-tabs">
+        <button data-a="intent" class="on">intent</button>
+        <button data-a="plan">plan</button>
+        <button data-a="audit">audit_report</button>
+      </div>
+      <div class="result ok" id="pipe-json" style="display:block;background:#fbfdff;border-color:var(--line);max-height:420px;overflow:auto">—</div>
     </div>
   </div>
 </section>
@@ -287,6 +348,69 @@ async function sendJsonRpc(){
   box.className="result "+(err?"bad":"ok");
   box.textContent=pretty(resp)+(err?(err.code===-32601?"\n\n→ -32601：方法不存在":err.code===-32603?"\n\n→ -32603：执行失败":""):"");
 }
+
+/* ---------- 全链路演示 ---------- */
+const FLOW_SEQ=["fb1","fb2","fb3","fb4","fb5"];
+let PIPE=null;
+
+async function runPipeline(){
+  const btn=$("#pipe-run");btn.disabled=true;btn.textContent="运行中…";
+  const v=$("#pipe-verdict");v.className="verdict";v.textContent="";
+  FLOW_SEQ.forEach(id=>{const el=document.getElementById(id);el.classList.remove("lit")});
+  document.querySelectorAll(".farrow").forEach(a=>a.classList.remove("lit"));
+  $("#pipe-steps").innerHTML='<tr><td colspan="5" class="empty">执行中…</td></tr>';
+  try{
+    PIPE=await post("/api/pipeline",{user_text:$("#pipe-text").value});
+  }catch(e){ PIPE={ok:false,error:String(e)}; }
+  btn.disabled=false;btn.textContent="▶ 运行全链路";
+  if(!PIPE.ok){$("#pipe-steps").innerHTML=`<tr><td class="empty bad">${esc(PIPE.error||"执行失败")}</td></tr>`;return}
+
+  // 依次点亮 组1→组5
+  for(let i=0;i<FLOW_SEQ.length;i++){
+    document.getElementById(FLOW_SEQ[i]).classList.add("lit");
+    if(i<FLOW_SEQ.length-1)document.querySelectorAll(".farrow")[i].classList.add("lit");
+    await new Promise(r=>setTimeout(r,520));
+  }
+  const a=PIPE.audit_report;
+  v.className="verdict "+(a.verdict==="PASS"?"pass":"fail");
+  v.textContent=a.verdict==="PASS"?"审计 PASS ✔":"审计 FAIL ✘";
+
+  // KPI
+  const s=PIPE.stats_summary;
+  $("#pipe-kpis").innerHTML=
+    `<div class="kpi"><div class="v bl">${s.calls}</div><div class="l">组4 统计落盘调用</div></div>
+     <div class="kpi"><div class="v ok">${s.success}</div><div class="l">成功</div></div>
+     <div class="kpi"><div class="v ${s.fail?"bad":""}">${s.fail}</div><div class="l">失败</div></div>
+     <div class="kpi"><div class="v">${s.rate}%</div><div class="l">成功率</div></div>
+     <div class="kpi"><div class="v ok">${PIPE.session.summary.success}/${PIPE.session.summary.total}</div><div class="l">组3 步骤成功</div></div>`;
+
+  // 组3 步骤表（提权行高亮）
+  const escSteps=new Set(PIPE.session.escalations.map(e=>e.step));
+  $("#pipe-steps").innerHTML=PIPE.session.steps.map(st=>{
+    const r=st.tool_result,ok=r.success;
+    const lvl=st.level_used+(escSteps.has(st.step)?' <span class="chip esc">提权</span>':"");
+    return `<tr class="${escSteps.has(st.step)?"hl":""}"><td>${st.step}</td>
+      <td><b>${esc(st.name)}</b><br><span style="color:var(--sub);font-size:11px">${st.kind}</span></td>
+      <td>${lvl}</td><td>${st.duration_ms} ms</td>
+      <td><span class="chip ${ok?"ok":"bad"}">${ok?"成功":"失败"}</span>
+      ${ok?"":`<br><span class="err" style="font-size:11px">${esc(r.error||"")}</span>`}</td></tr>`}).join("");
+
+  // 事件徽章：提权 + 自愈
+  let ev="";
+  PIPE.session.escalations.forEach(e=>ev+=`<div>🔑 <span class="chip esc">提权流</span> 步骤${e.step} ${esc(e.tool)}：${esc(e.from)} 被拒 → 用户确认 → ADMIN 重试成功</div>`);
+  (PIPE.session.self_healed||[]).forEach(h=>ev+=`<div>🩹 <span class="chip heal">自愈</span> ${esc(h.wrong)} → 纠正为 <b>${esc(h.fixed)}</b></div>`);
+  $("#pipe-events").innerHTML=ev||'<span style="color:var(--sub)">本次没有提权/自愈事件</span>';
+  showPipeJson("intent");
+}
+
+function showPipeJson(which){
+  document.querySelectorAll("#pipe-tabs button").forEach(b=>b.classList.toggle("on",b.dataset.a===which));
+  const box=$("#pipe-json");
+  if(!PIPE){box.textContent="—";return}
+  const data={intent:PIPE.intent,plan:PIPE.plan,audit:PIPE.audit_report}[which];
+  box.textContent=pretty(data);
+}
+document.querySelectorAll("#pipe-tabs button").forEach(b=>b.onclick=()=>showPipeJson(b.dataset.a));
 
 init();
 </script>

@@ -24,6 +24,7 @@ class AppAgentStandIn:
         self.skills = skills
         self.base_level = level
         self.session_id = f"agent-{uuid.uuid4().hex[:8]}"
+        self.self_healed: list[dict] = []   # 必须是实例属性，否则跨会话累积
 
     # ---- 公开契约的用法示例：schema 内省（可喂给 LLM function-calling）----
     def tool_menu(self) -> list[str]:
@@ -92,7 +93,6 @@ class AppAgentStandIn:
         return rec
 
     # ---- 策略 2：工具名写错 → list_tools 模糊匹配纠错（自愈）----
-    self_healed: list[dict] = []
 
     def try_call_with_selfheal(self, name: str, params: dict,
                                level: PermissionLevel | None = None):

@@ -107,14 +107,15 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def _body(self) -> dict:
+    def _body(self) -> dict | None:
+        """解析请求体；返回 None 表示请求体非法，{} 表示合法的空体。"""
         length = int(self.headers.get("Content-Length") or 0)
         if not length:
             return {}
         try:
             return json.loads(self.rfile.read(length).decode("utf-8"))
         except (json.JSONDecodeError, UnicodeDecodeError):
-            return {}
+            return None
 
     def log_message(self, fmt: str, *args) -> None:  # 安静模式
         pass
@@ -174,7 +175,7 @@ class Handler(BaseHTTPRequestHandler):
     # ---------- POST ----------
     def do_POST(self) -> None:
         body = self._body()
-        if not body and (self.headers.get("Content-Length") or "0") != "0":
+        if body is None:  # 请求体不是合法 UTF-8 JSON
             self._json({"error": "请求体不是合法的 UTF-8 JSON"}, 400)
             return
         try:
@@ -207,6 +208,15 @@ class Handler(BaseHTTPRequestHandler):
             params = body.get("params") or {}
             resp = STACK.mcp.mock_jsonrpc_call(STACK.registry, method, params)
             self._json({"response": resp})
+        elif self.path == "/api/pipeline":
+            # 五组全链路演示：组1/2/3/5 为联调替身，组4 真实模块参与
+            try:
+                from pipeline_demo.run_demo import run_pipeline, OUT as PIPE_OUT
+                user_text = str(body.get("user_text")) if body.get("user_text") else None
+                result = run_pipeline(user_text=user_text, out=PIPE_OUT, verbose=False)
+                self._json(result)
+            except Exception as e:
+                self._json({"ok": False, "error": f"全链路执行失败: {type(e).__name__}: {e}"}, 500)
         elif self.path == "/api/reset":
             STACK.reset()
             self._json({"ok": True, "message": "统计已清零，模块栈已重建"})
