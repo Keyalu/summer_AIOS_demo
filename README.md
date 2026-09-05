@@ -58,7 +58,18 @@ python gui/server.py        # 打开 http://127.0.0.1:8765
 
 - `assets/charts/` — 5 张图（性能对比、流水线、权限、安全、命令流转），SVG+PNG 双格式
 - `assets/dashboard.html` — 审计看板（单文件离线可用，组5 可直接消费）
+- `assets/archify/` — 2 张交互式架构图（五组流水线 / 组4 内部模块图）
 - 再生成脚本：`tools/gen_charts.py`、`tools/gen_dashboard.py`（纯标准库）
+
+### 五组全链路演示
+
+```bash
+python pipeline_demo/run_demo.py
+```
+
+组1/组2/组3/组5 为**联调替身**（组3 只走公开契约、组5 只吃 JSON），组4 是真实模块。
+一条命令看完整流水线：意图解析 → 任务规划 → 执行（含提权流与工具名自愈）→ 纯 JSON 审计。
+中间产物全部落盘 `pipeline_demo/out/`，测试见 `tests/test_pipeline_demo.py`。
 
 ---
 
@@ -91,6 +102,13 @@ linux-agentic-os-group4/
 ├── gui/                         # ★ GUI 响应模块（本地网页操作台）
 │   ├── server.py                # 纯标准库 HTTP 服务（工具/技能/统计/MCP 四组 API）
 │   └── index.html               # 前端单页（无任何 CDN 依赖，离线可用）
+│
+├── pipeline_demo/               # ★ 五组全链路演示（组3/组5 联调替身）
+│   ├── host_agent.py            # 组1 替身：自然语言 → intent_json（纯逻辑）
+│   ├── task_planner.py          # 组2 替身：intent → plan_json（纯逻辑）
+│   ├── app_agent.py             # 组3 替身：执行计划，只走公开契约（提权流+自愈）
+│   ├── coordinator.py           # 组5 替身：只吃 JSON 出审计报告
+│   └── run_demo.py              # 一条命令跑通全链路 → out/ 六份 JSON 产物
 │
 ├── tools/                       # 可视化生成脚本（纯标准库）
 │   ├── gen_charts.py            # 生成 5 张 SVG 图表 → assets/charts/
