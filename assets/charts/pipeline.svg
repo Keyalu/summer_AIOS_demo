@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="430" viewBox="0 0 1240 430" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif">
+<title>五组流水线</title>
+<rect width="1240" height="430" fill="#ffffff"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker><marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker><marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker></defs>
+<text x="40" y="52" font-size="26" font-weight="700" fill="#0f172a">我们在流水线中的位置：夹在组3与操作系统之间</text>
+<text x="40" y="80" font-size="14" fill="#64748b">参考 MCP 协议思想，组间以 JSON（JSON-RPC 2.0）传递数据；组4 为整条链路唯一真实触碰 OS 的环节</text>
+<rect x="30" y="140" width="200" height="112" rx="12" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="130" y="184" font-size="17" fill="#0f172a" font-weight="700" text-anchor="middle">组1</text>
+<text x="130" y="212" font-size="15" fill="#0f172a" font-weight="700" text-anchor="middle">HostAgent</text>
+<text x="130" y="276" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">解析用户意图</text>
+<line x1="234" y1="196" x2="263" y2="196" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="275" y="140" width="200" height="112" rx="12" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="375" y="184" font-size="17" fill="#0f172a" font-weight="700" text-anchor="middle">组2</text>
+<text x="375" y="212" font-size="15" fill="#0f172a" font-weight="700" text-anchor="middle">TaskPlanner</text>
+<text x="375" y="276" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">规划任务步骤</text>
+<line x1="479" y1="196" x2="508" y2="196" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="520" y="140" width="200" height="112" rx="12" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="620" y="184" font-size="17" fill="#0f172a" font-weight="700" text-anchor="middle">组3</text>
+<text x="620" y="212" font-size="15" fill="#0f172a" font-weight="700" text-anchor="middle">AppAgent</text>
+<text x="620" y="276" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">执行代理</text>
+<line x1="724" y1="196" x2="753" y2="196" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="765" y="140" width="200" height="112" rx="12" fill="#2563eb" stroke="#2563eb" stroke-width="1.5"/>
+<text x="865" y="184" font-size="17" fill="#ffffff" font-weight="700" text-anchor="middle">组4</text>
+<text x="865" y="212" font-size="15" fill="#ffffff" font-weight="700" text-anchor="middle">Tools + OS Skills</text>
+<text x="865" y="234" font-size="11" fill="#dbeafe" font-weight="400" text-anchor="middle">工具注册表 · 技能库 · MCP</text>
+<line x1="969" y1="196" x2="998" y2="196" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="1010" y="140" width="200" height="112" rx="12" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="1110" y="184" font-size="17" fill="#0f172a" font-weight="700" text-anchor="middle">组5</text>
+<text x="1110" y="212" font-size="15" fill="#0f172a" font-weight="700" text-anchor="middle">Coordinator</text>
+<text x="1110" y="276" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">审计·安全·RAG</text>
+<text x="742" y="114" font-size="12" fill="#2563eb" font-weight="600" text-anchor="middle">registry.call()</text>
+<text x="987" y="114" font-size="12" fill="#64748b" font-weight="600" text-anchor="middle">stats.json</text>
+<rect x="725" y="318" width="280" height="70" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6,4"/>
+<text x="865" y="348" font-size="15" fill="#0f172a" font-weight="600" text-anchor="middle">Linux 文件系统 / Shell</text>
+<text x="865" y="370" font-size="11" fill="#64748b" font-weight="400" text-anchor="middle">8 个工具真实执行（copy/move/delete/create/list/read/write/run_command）</text>
+<line x1="851" y1="258" x2="851" y2="310" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/><text x="843" y="292" font-size="12" fill="#64748b" font-weight="400" text-anchor="end">调用</text>
+<line x1="879" y1="316" x2="879" y2="262" stroke="#16a34a" stroke-width="2" marker-end="url(#ah-green)"/><text x="887" y="292" font-size="12" fill="#16a34a" font-weight="400" text-anchor="start">ToolResult</text>
+</svg>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>组4 · Tools GUI 响应模块</title>
+<style>
+:root{--ink:#0f172a;--sub:#64748b;--line:#e2e8f0;--bg:#f8fafc;--blue:#2563eb;--blue-bg:#dbeafe;
+--green:#16a34a;--green-bg:#dcfce7;--red:#dc2626;--red-bg:#fee2e2;--amber:#d97706;--amber-bg:#fef3c7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+header h1{font-size:18px}
+header .warn{font-size:12px;color:var(--amber);background:var(--amber-bg);padding:4px 12px;border-radius:99px}
+nav{display:flex;gap:6px;margin-left:auto}
+nav button{border:1px solid var(--line);background:#fff;padding:7px 18px;border-radius:9px;font-size:13.5px;cursor:pointer;color:var(--sub)}
+nav button.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+main{max-width:1180px;margin:24px auto;padding:0 24px}
+.page{display:none}.page.on{display:block}
+.grid{display:grid;grid-template-columns:300px 1fr;gap:20px}
+.list{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.list h3{font-size:13px;color:var(--sub);padding:12px 16px;border-bottom:1px solid var(--line);background:#fbfdff}
+.list .item{padding:11px 16px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.list .item:last-child{border-bottom:0}
+.list .item:hover{background:#f1f5f9}
+.list .item.on{background:var(--blue-bg)}
+.list .item b{font-size:13.5px;font-weight:600}
+.badge{font-size:10.5px;padding:2px 8px;border-radius:99px;font-weight:700;flex-shrink:0}
+.b-public{background:#f1f5f9;color:var(--sub)}.b-user{background:var(--blue-bg);color:var(--blue)}
+.b-admin{background:var(--amber-bg);color:var(--amber)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.card h2{font-size:15px;margin-bottom:4px}
+.card .desc{font-size:12.5px;color:var(--sub);margin-bottom:16px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px}
+.field label .req{color:var(--red)}
+.field label .tip{color:var(--sub);font-weight:400;font-size:11.5px;margin-left:6px}
+.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:13px;font-family:inherit}
+.field textarea{font-family:Consolas,monospace;font-size:12.5px}
+.field input:focus,.field textarea:focus{outline:2px solid var(--blue-bg);border-color:var(--blue)}
+.lvl{display:flex;gap:8px;margin:14px 0}
+.lvl button{flex:1;border:1.5px solid var(--line);background:#fff;padding:8px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--sub)}
+.lvl button.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);font-weight:700}
+.go{background:var(--blue);border:0;color:#fff;font-size:14px;font-weight:600;padding:10px 26px;border-radius:9px;cursor:pointer}
+.go:hover{background:#1d4ed8}
+.ghost{background:#fff;border:1px solid var(--line);color:var(--sub);padding:8px 16px;border-radius:9px;cursor:pointer;font-size:12.5px}
+.ghost:hover{color:var(--red);border-color:var(--red)}
+.result{margin-top:16px;border-radius:10px;padding:14px 16px;font-family:Consolas,monospace;font-size:12.5px;white-space:pre-wrap;word-break:break-all;display:none}
+.result.ok{background:var(--green-bg);border:1px solid var(--green)}
+.result.bad{background:var(--red-bg);border:1px solid var(--red)}
+.meta-line{font-size:12px;color:var(--sub);margin-bottom:8px;display:none}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .v{font-size:24px;font-weight:700}.kpi .l{font-size:11.5px;color:var(--sub);margin-top:3px}
+.ok{color:var(--green)}.bad{color:var(--red)}.bl{color:var(--blue)}
+.bar-row{display:grid;grid-template-columns:170px 1fr 90px;align-items:center;gap:10px;margin:6px 0;font-size:12.5px}
+.bar-track{background:#f1f5f9;border-radius:6px;height:16px;overflow:hidden}
+.bar-fill{height:100%;background:var(--blue-bg);border-right:3px solid var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:#fbfdff;color:var(--sub);font-size:12px}
+tr:last-child td{border-bottom:0}
+code{font-family:Consolas,monospace;font-size:11.5px;color:#475569;word-break:break-all}
+.chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.chip.ok{background:var(--green-bg);color:var(--green)}.chip.bad{background:var(--red-bg);color:var(--red)}
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:12.5px;color:var(--sub)}
+.empty{color:var(--sub);font-size:13px;padding:30px;text-align:center}
+.jsonrpc-flow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+</style>
+</head>
+<body>
+<header>
+  <h1>组4 · Tools GUI 响应模块</h1>
+  <span class="warn">⚠ 调用是真实 OS 操作 — 演示请用沙箱目录</span>
+  <nav>
+    <button data-p="tools" class="on">工具台</button>
+    <button data-p="skills">技能台</button>
+    <button data-p="stats">统计看板</button>
+    <button data-p="mcp">MCP · JSON-RPC</button>
+  </nav>
+</header>
+
+<main>
+<!-- ============ 工具台 ============ -->
+<section class="page on" id="page-tools">
+  <div class="grid">
+    <div class="list"><h3>已注册工具（schema 内省自动生成）</h3><div id="tool-list"></div></div>
+    <div class="card" id="tool-form"><div class="empty">← 从左侧选择一个工具</div></div>
+  </div>
+</section>
+
+<!-- ============ 技能台 ============ -->
+<section class="page" id="page-skills">
+  <div class="grid">
+    <div class="list"><h3>OS 技能库（多工具编排）</h3><div id="skill-list"></div></div>
+    <div class="card" id="skill-form"><div class="empty">← 从左侧选择一个技能</div></div>
+  </div>
+</section>
+
+<!-- ============ 统计看板 ============ -->
+<section class="page" id="page-stats">
+  <div class="toolbar">
+    <label><input type="checkbox" id="auto" checked> 每 2 秒自动刷新</label>
+    <button class="ghost" onclick="refreshStats()">手动刷新</button>
+    <button class="ghost" onclick="resetStack()">清零统计（重建模块栈）</button>
+    <span id="stats-updated"></span>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="card" style="margin-bottom:18px"><h2>按工具聚合</h2><div id="bars" style="margin-top:10px"></div></div>
+  <table><thead><tr><th>时间</th><th>工具</th><th>结果</th><th>耗时</th><th>参数 / 错误</th></tr></thead>
+  <tbody id="rows"><tr><td colspan="5" class="empty">暂无调用记录</td></tr></tbody></table>
+</section>
+
+<!-- ============ MCP ============ -->
+<section class="page" id="page-mcp">
+  <div class="card" style="margin-bottom:18px">
+    <h2>JSON-RPC 2.0 调用</h2>
+    <div class="desc">MCP Mock 工具经 JSON-RPC 封装调用；-32601 = 方法不存在，-32603 = 执行失败</div>
+    <div class="field"><label>方法</label>
+      <select id="mcp-method" style="padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px">
+        <option value="mcp_search">mcp_search</option>
+        <option value="mcp_weather">mcp_weather</option>
+        <option value="mcp_translate">mcp_translate</option>
+      </select></div>
+    <div class="field"><label>params（JSON）</label>
+      <textarea id="mcp-params" rows="3">{"query": "UFO 框架"}</textarea></div>
+    <button class="go" onclick="sendJsonRpc()">发送请求</button>
+    <div class="jsonrpc-flow" style="margin-top:16px">
+      <div><h2 style="font-size:13px;color:var(--sub)">请求报文</h2>
+        <div class="result ok" id="mcp-req" style="display:block;background:#fbfdff;border-color:var(--line)"></div></div>
+      <div><h2 style="font-size:13px;color:var(--sub)">响应报文</h2>
+        <div class="result" id="mcp-res"></div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+const pretty=o=>JSON.stringify(o,null,2);
+const LVL={public:"b-public",user:"b-user",admin:"b-admin"};
+
+/* ---------- 导航 ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");$("#page-"+b.dataset.p).classList.add("on");
+  if(b.dataset.p==="stats")refreshStats();
+});
+
+/* ---------- 工具台 / 技能台 ---------- */
+let TOOLS=[],SKILLS=[],curTool=null,curSkill=null;
+
+function renderItem(item,kind){
+  const box=kind==="tool"?$("#tool-form"):$("#skill-form");
+  const props=item.inputSchema.properties,req=item.inputSchema.required||[];
+  let html=`<h2>${esc(item.name)}</h2><div class="desc">${esc(item.description||"")}</div>`;
+  for(const[k,p]of Object.entries(props)){
+    const def=p.default!==undefined&&p.default!==null?`value="${esc(String(p.default))}"`:"";
+    const star=req.includes(k)?'<span class="req"> *</span>':"";
+    html+=`<div class="field"><label>${esc(k)}${star}
+      <span class="tip">${esc(p.description||"")}${p.type==="number"?"（数字）":""}</span></label>
+      <input id="f-${esc(k)}" data-k="${esc(k)}" data-t="${p.type}" ${def} placeholder="${esc(p.description||"")}"></div>`;
+  }
+  if(kind==="tool"&&props){
+    html+=`<div class="field"><label>以什么身份调用（user_level）</label><div class="lvl" id="lvl">`;
+    for(const l of["public","user","admin"])
+      html+=`<button data-l="${l}" class="${l===item.permission?"on":""}">${l}</button>`;
+    html+=`</div></div>`;
+  }
+  html+=`<button class="go" onclick="${kind==='tool'?'callTool()':'callSkill()'}">执行 ${esc(item.name)}</button>
+    <div class="meta-line" id="res-meta"></div><div class="result" id="res-box"></div>`;
+  box.innerHTML=html;
+  if(kind==="tool")document.querySelectorAll("#lvl button").forEach(b=>
+    b.onclick=()=>{document.querySelectorAll("#lvl button").forEach(x=>x.classList.remove("on"));b.classList.add("on")});
+}
+
+function collectParams(scope){
+  const out={};
+  scope.querySelectorAll("[data-k]").forEach(el=>{
+    let v=el.value.trim();
+    if(v==="")return;
+    // 用户常从资源管理器"复制文件地址"，带引号 → 去掉包裹引号
+    if((v.startsWith('"')&&v.endsWith('"'))||(v.startsWith("'")&&v.endsWith("'")))
+      v=v.slice(1,-1).trim();
+    if(v==="")return;
+    if(el.dataset.t==="number"){const n=Number(v);if(!Number.isNaN(n))v=n}
+    out[el.dataset.k]=v});
+  return out;
+}
+async function post(url,body){const r=await fetch(url,{method:"POST",
+  headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});return r.json()}
+
+async function callTool(){
+  const level=document.querySelector("#lvl button.on")?.dataset.l||"user";
+  const data=await post("/api/call",{name:curTool,params:collectParams($("#tool-form")),level});
+  show(data);
+}
+async function callSkill(){
+  const data=await post("/api/skill",{name:curSkill,params:collectParams($("#skill-form"))});
+  show(data);
+}
+function show(data){
+  const box=$("#res-box"),meta=$("#res-meta");
+  box.style.display="block";meta.style.display="block";
+  const ok=data.result&&data.result.success;
+  box.className="result "+(ok?"ok":"bad");
+  meta.textContent=`服务端计时：${data.duration_ms} ms`+(data.level?` ｜ user_level=${data.level}`:"");
+  box.textContent=pretty(data.result);
+}
+
+function fillList(el,items,kind){
+  el.innerHTML=items.length?"":'<div class="empty">无</div>';
+  items.forEach((it,i)=>{
+    const d=document.createElement("div");d.className="item";
+    const badge=kind==="tool"?`<span class="badge ${LVL[it.permission]}">${it.permission}</span>`:"<span></span>";
+    d.innerHTML=`<b>${esc(it.name)}</b>${badge}`;
+    d.onclick=()=>{el.querySelectorAll(".item").forEach(x=>x.classList.remove("on"));d.classList.add("on");
+      if(kind==="tool"){curTool=it.name;renderItem(it,"tool")}else{curSkill=it.name;renderItem(it,"skill")}};
+    el.appendChild(d)});
+}
+
+async function init(){
+  const[t,s]=await Promise.all([fetch("/api/tools").then(r=>r.json()),fetch("/api/skills").then(r=>r.json())]);
+  TOOLS=t.tools||[];SKILLS=s.skills||[];
+  fillList($("#tool-list"),TOOLS,"tool");
+  fillList($("#skill-list"),SKILLS,"skill");
+}
+
+/* ---------- 统计看板 ---------- */
+let timer=null;
+async function refreshStats(){
+  const d=await fetch("/api/stats").then(r=>r.json());
+  const s=d.summary||{};
+  $("#kpis").innerHTML=
+    `<div class="kpi"><div class="v bl">${s.total||0}</div><div class="l">总调用</div></div>
+     <div class="kpi"><div class="v ok">${s.ok||0}</div><div class="l">成功</div></div>
+     <div class="kpi"><div class="v ${s.fail?"bad":""}">${s.fail||0}</div><div class="l">失败</div></div>
+     <div class="kpi"><div class="v">${s.rate??0}%</div><div class="l">成功率</div></div>
+     <div class="kpi"><div class="v" style="font-size:14px;padding-top:8px">${d.updated?d.updated.replace("T"," ").slice(0,19):"-"}</div><div class="l">最近落盘时间</div></div>`;
+  const cs=Object.entries(d.counters||{}).sort((a,b)=>b[1].calls-a[1].calls);
+  const mx=Math.max(1,...cs.map(c=>c[1].calls));
+  $("#bars").innerHTML=cs.map(([k,c])=>`<div class="bar-row"><span>${esc(k)}</span>
+    <div class="bar-track"><div class="bar-fill" style="width:${(100*c.calls/mx).toFixed(1)}%"></div></div>
+    <span style="color:var(--sub);text-align:right">${c.calls} 次 · 败 ${c.fail}</span></div>`).join("")
+    ||'<div class="empty" style="padding:10px">尚无数据</div>';
+  const recs=(d.records||[]).slice().reverse();
+  $("#rows").innerHTML=recs.length?recs.map(r=>`<tr>
+    <td><code>${(r.time||"").replace("T"," ").slice(0,19)}</code></td>
+    <td><b>${esc(r.tool)}</b></td>
+    <td><span class="chip ${r.success?"ok":"bad"}">${r.success?"成功":"失败"}</span></td>
+    <td>${r.duration_ms} ms</td>
+    <td>${r.success?`<code>${esc(JSON.stringify(r.params))}</code>`:`<span class="bad">${esc(r.error||"")}</span>`}</td>
+  </tr>`).join(""):'<tr><td colspan="5" class="empty">暂无调用记录</td></tr>';
+  $("#stats-updated").textContent=d.updated?`（文件每条调用原子落盘）`:"";
+}
+$("#auto").onchange=e=>{clearInterval(timer);if(e.target.checked)timer=setInterval(refreshStats,2000)};
+timer=setInterval(refreshStats,2000);
+
+async function resetStack(){
+  if(!confirm("确认清零统计并重建模块栈？"))return;
+  await post("/api/reset",{});
+  refreshStats();
+}
+
+/* ---------- MCP ---------- */
+const MCP_EXAMPLES={
+  mcp_search:'{"query": "UFO 框架"}',
+  mcp_weather:'{"city": "上海", "days": 1}',
+  mcp_translate:'{"text": "你好，世界", "to_lang": "en"}'
+};
+document.getElementById("mcp-method").addEventListener("change",e=>{
+  document.getElementById("mcp-params").value=MCP_EXAMPLES[e.target.value]||"{}";
+});
+async function sendJsonRpc(){
+  const method=$("#mcp-method").value;let params;
+  try{params=JSON.parse($("#mcp-params").value||"{}")}
+  catch(e){alert("params 不是合法 JSON："+e.message);return}
+  const id=Date.now()%100000;
+  const req={jsonrpc:"2.0",method,params,id};
+  const reqBox=$("#mcp-req");reqBox.style.display="block";reqBox.textContent=pretty(req);
+  const data=await post("/api/jsonrpc",{method,params});
+  const box=$("#mcp-res");box.style.display="block";
+  const resp=data.response||{};
+  const err=resp.error;
+  box.className="result "+(err?"bad":"ok");
+  box.textContent=pretty(resp)+(err?(err.code===-32601?"\n\n→ -32601：方法不存在":err.code===-32603?"\n\n→ -32603：执行失败":""):"");
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="560" viewBox="0 0 1240 560" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif">
+<title>Week3 高压优化实测收益</title>
+<rect width="1240" height="560" fill="#ffffff"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker><marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker><marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker></defs>
+<text x="40" y="52" font-size="26" font-weight="700" fill="#0f172a">Week3 高压优化：实测前后对比</text>
+<text x="40" y="80" font-size="14" fill="#64748b">数据来源：stress/results.json（B1/B2）与 docs/week3 压测报告 A2，均为实测值；横轴为对数刻度</text>
+<line x1="430" y1="110" x2="430" y2="470" stroke="#e2e8f0" stroke-width="1"/>
+<text x="430" y="492" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">0.01s</text>
+<line x1="574" y1="110" x2="574" y2="470" stroke="#e2e8f0" stroke-width="1"/>
+<text x="574" y="492" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">0.1s</text>
+<line x1="718" y1="110" x2="718" y2="470" stroke="#e2e8f0" stroke-width="1"/>
+<text x="718" y="492" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">1s</text>
+<line x1="862" y1="110" x2="862" y2="470" stroke="#e2e8f0" stroke-width="1"/>
+<text x="862" y="492" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">10s</text>
+<line x1="1006" y1="110" x2="1006" y2="470" stroke="#e2e8f0" stroke-width="1"/>
+<text x="1006" y="492" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">100s</text>
+<line x1="1150" y1="110" x2="1150" y2="470" stroke="#e2e8f0" stroke-width="1"/>
+<text x="1150" y="492" font-size="12" fill="#64748b" font-weight="400" text-anchor="middle">1000s</text>
+<text x="790" y="518" font-size="13" fill="#64748b" font-weight="400" text-anchor="middle">单次操作耗时（秒，对数轴）</text>
+<text x="410" y="152" font-size="15" fill="#0f172a" font-weight="600" text-anchor="end">list_directory</text>
+<text x="410" y="174" font-size="13" fill="#64748b" font-weight="400" text-anchor="end">万文件列目录</text>
+<rect x="430" y="138" width="581" height="26" rx="5" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="1019" y="156" font-size="13" fill="#dc2626" font-weight="600" text-anchor="start">108.55s</text>
+<rect x="430" y="172" width="101" height="26" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="539" y="190" font-size="13" fill="#16a34a" font-weight="600" text-anchor="start">0.051s</text>
+<text x="438" y="220" font-size="12" fill="#64748b" font-weight="400" text-anchor="start">手段：os.scandir + 分页游标</text>
+<rect x="1162" y="146" width="62" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="1193" y="164" font-size="14" fill="#2563eb" font-weight="700" text-anchor="middle">2146.3</text>
+<text x="1193" y="179" font-size="10" fill="#2563eb" font-weight="400" text-anchor="middle">倍速</text>
+<text x="410" y="270" font-size="15" fill="#0f172a" font-weight="600" text-anchor="end">find_duplicate_files</text>
+<text x="410" y="292" font-size="13" fill="#64748b" font-weight="400" text-anchor="end">2000 文件查重</text>
+<rect x="430" y="256" width="412" height="26" rx="5" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="850" y="274" font-size="13" fill="#dc2626" font-weight="600" text-anchor="start">7.34s</text>
+<rect x="430" y="290" width="248" height="26" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="686" y="308" font-size="13" fill="#16a34a" font-weight="600" text-anchor="start">0.533s</text>
+<text x="438" y="338" font-size="12" fill="#64748b" font-weight="400" text-anchor="start">手段：先按大小预分组，只对嫌疑文件算 MD5</text>
+<rect x="1162" y="264" width="62" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="1193" y="282" font-size="14" fill="#2563eb" font-weight="700" text-anchor="middle">13.8</text>
+<text x="1193" y="297" font-size="10" fill="#2563eb" font-weight="400" text-anchor="middle">倍速</text>
+<text x="410" y="388" font-size="15" fill="#0f172a" font-weight="600" text-anchor="end">统计落盘 1000 条</text>
+<text x="410" y="410" font-size="13" fill="#64748b" font-weight="400" text-anchor="end">BufferedToolStats</text>
+<rect x="430" y="374" width="536" height="26" rx="5" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="974" y="392" font-size="13" fill="#dc2626" font-weight="600" text-anchor="start">53.1s</text>
+<rect x="430" y="408" width="212" height="26" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+<text x="650" y="426" font-size="13" fill="#16a34a" font-weight="600" text-anchor="start">0.3s</text>
+<text x="438" y="456" font-size="12" fill="#64748b" font-weight="400" text-anchor="start">手段：缓冲批量写入 + 环形缓冲</text>
+<rect x="1162" y="382" width="62" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="1193" y="400" font-size="14" fill="#2563eb" font-weight="700" text-anchor="middle">177.7</text>
+<text x="1193" y="415" font-size="10" fill="#2563eb" font-weight="400" text-anchor="middle">倍速</text>
+</svg>

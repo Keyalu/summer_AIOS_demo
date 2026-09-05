@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="560" viewBox="0 0 1240 560" font-family="'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', sans-serif">
+<title>三级权限模型</title>
+<rect width="1240" height="560" fill="#ffffff"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker><marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker><marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker></defs>
+<text x="40" y="52" font-size="26" font-weight="700" fill="#0f172a">三级权限：数值 rank 比较，向上兼容、向下拦截</text>
+<text x="40" y="80" font-size="14" fill="#64748b">定义于 src/interfaces.py：public=0，user=1，admin=2；放行条件 user_level.rank() ≥ 工具要求 rank()</text>
+<rect x="60" y="250" width="320" height="150" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+<text x="84" y="292" font-size="22" fill="#94a3b8" font-weight="700" text-anchor="start">PUBLIC</text>
+<text x="356" y="290" font-size="15" fill="#64748b" font-weight="600" text-anchor="end">rank 0</text>
+<text x="84" y="326" font-size="15" fill="#0f172a" font-weight="600" text-anchor="start">只读操作</text>
+<text x="84" y="354" font-size="12.5" fill="#64748b" font-weight="400" text-anchor="start">list_directory / read_file</text>
+<rect x="410" y="224" width="320" height="176" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+<text x="434" y="266" font-size="22" fill="#2563eb" font-weight="700" text-anchor="start">USER</text>
+<text x="706" y="264" font-size="15" fill="#64748b" font-weight="600" text-anchor="end">rank 1</text>
+<text x="434" y="300" font-size="15" fill="#0f172a" font-weight="600" text-anchor="start">文件操作</text>
+<text x="434" y="328" font-size="12.5" fill="#64748b" font-weight="400" text-anchor="start">copy / move / delete / create / write</text>
+<rect x="760" y="198" width="320" height="202" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+<text x="784" y="240" font-size="22" fill="#d97706" font-weight="700" text-anchor="start">ADMIN</text>
+<text x="1056" y="238" font-size="15" fill="#64748b" font-weight="600" text-anchor="end">rank 2</text>
+<text x="784" y="274" font-size="15" fill="#0f172a" font-weight="600" text-anchor="start">执行命令</text>
+<text x="784" y="302" font-size="12.5" fill="#64748b" font-weight="400" text-anchor="start">run_command（受黑名单+保护路径约束）</text>
+<text x="570" y="118" font-size="13" fill="#64748b" font-weight="400" text-anchor="middle">调用时传入 user_level</text>
+<line x1="510" y1="132" x2="622" y2="132" stroke="#2563eb" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="60" y="418" width="1120" height="100" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+<text x="84" y="450" font-size="14" fill="#0f172a" font-weight="600" text-anchor="start">示例：USER（rank 1）调用 run_command（要求 rank 2）</text>
+<text x="84" y="478" font-size="12.5" fill="#dc2626" font-weight="400" text-anchor="start">1 &lt; 2 → 拒绝执行，返回 ToolResult(success=False, error='权限不足: run_command 需要 admin 权限')</text>
+<text x="84" y="502" font-size="12.5" fill="#64748b" font-weight="400" text-anchor="start">建议：AppAgent 平时以 USER 运行，仅在用户确认后临时提权 ADMIN</text>
+</svg>

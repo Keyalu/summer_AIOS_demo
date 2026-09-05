@@ -44,6 +44,22 @@ python -m pytest tests/test_all.py -v
 
 详细运行指南请查看 [RUN_GUIDE.md](./RUN_GUIDE.md)。
 
+### 可视化操作台（GUI）
+
+```bash
+python gui/server.py        # 打开 http://127.0.0.1:8765
+```
+
+四个页签：**工具台**（schema 自动生成参数表单，选权限发起真实调用）、**技能台**、
+**统计看板**（实时成功/失败/耗时）、**MCP·JSON-RPC**（报文级调试）。
+调用会经过与生产一致的权限闸门/黑名单/保护路径；服务只绑定 127.0.0.1。
+
+### 可视化产物
+
+- `assets/charts/` — 5 张图（性能对比、流水线、权限、安全、命令流转），SVG+PNG 双格式
+- `assets/dashboard.html` — 审计看板（单文件离线可用，组5 可直接消费）
+- 再生成脚本：`tools/gen_charts.py`、`tools/gen_dashboard.py`（纯标准库）
+
 ---
 
 ## 项目结构
@@ -71,6 +87,16 @@ linux-agentic-os-group4/
 │   ├── mock_registry.py         # Mock注册表（给其他组并行开发用）
 │   ├── mock_skills.py           # Mock技能库
 │   └── real_tools.py            # 真实行为工具（open_url浏览器 + send_email邮件，可选注册）
+│
+├── gui/                         # ★ GUI 响应模块（本地网页操作台）
+│   ├── server.py                # 纯标准库 HTTP 服务（工具/技能/统计/MCP 四组 API）
+│   └── index.html               # 前端单页（无任何 CDN 依赖，离线可用）
+│
+├── tools/                       # 可视化生成脚本（纯标准库）
+│   ├── gen_charts.py            # 生成 5 张 SVG 图表 → assets/charts/
+│   └── gen_dashboard.py         # 模拟会话 + 生成审计看板 → assets/dashboard.html
+│
+├── assets/                      # 可视化产物（图表 PNG/SVG、审计看板、截图）
 │
 ├── tests/                       # 完整测试套件
 │   ├── test_all.py              # 31个测试（覆盖全部功能）

@@ -1,0 +1,158 @@
+{
+  "records": [
+    {
+      "time": "2026-09-05T18:07:21.982328",
+      "tool": "write_file",
+      "params": {
+        "path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/readme.md",
+        "content": "demo\n"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:21.984283",
+      "tool": "write_file",
+      "params": {
+        "path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/a.md",
+        "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:21.985256",
+      "tool": "write_file",
+      "params": {
+        "path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/b.md",
+        "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:21.987242",
+      "tool": "write_file",
+      "params": {
+        "path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/c.md",
+        "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:21.989207",
+      "tool": "list_directory",
+      "params": {
+        "path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:21.991158",
+      "tool": "read_file",
+      "params": {
+        "path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/readme.md"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:21.994904",
+      "tool": "copy_file",
+      "params": {
+        "src": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/readme.md",
+        "dest": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/readme_copy.md"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:22.194981",
+      "tool": "run_command",
+      "params": {
+        "cmd": "echo hello-from-gui-demo"
+      },
+      "success": true,
+      "duration_ms": 32.0
+    },
+    {
+      "time": "2026-09-05T18:07:22.196945",
+      "tool": "list_directory",
+      "params": {
+        "path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox"
+      },
+      "success": true,
+      "duration_ms": 0.0
+    },
+    {
+      "time": "2026-09-05T18:07:22.197918",
+      "tool": "copy_file",
+      "params": {
+        "src": "nonexistent__x.bin",
+        "dest": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/d.bin"
+      },
+      "success": false,
+      "duration_ms": 0.0,
+      "error": "源文件不存在: C:\\Users\\keyal\\Desktop\\AIOS\\111\\nonexistent__x.bin"
+    },
+    {
+      "time": "2026-09-05T18:07:22.199871",
+      "tool": "write_file",
+      "params": {
+        "path": "/etc/demo_block_test.txt",
+        "content": "x"
+      },
+      "success": false,
+      "duration_ms": 0.0,
+      "error": "拒绝写入受保护路径: \\etc\\demo_block_test.txt (受保护路径: /etc)"
+    },
+    {
+      "time": "2026-09-05T18:07:22.200847",
+      "tool": "run_command",
+      "params": {
+        "cmd": "rm -rf /"
+      },
+      "success": false,
+      "duration_ms": 0.0,
+      "error": "拒绝执行: 包含危险关键词: rm -rf"
+    },
+    {
+      "time": "2026-09-05T18:07:22.201823",
+      "tool": "read_file",
+      "params": {},
+      "success": false,
+      "duration_ms": 0.0,
+      "error": "参数错误: 缺少必需参数: path"
+    }
+  ],
+  "counters": {
+    "write_file": {
+      "calls": 5,
+      "success": 4,
+      "fail": 1
+    },
+    "list_directory": {
+      "calls": 2,
+      "success": 2,
+      "fail": 0
+    },
+    "read_file": {
+      "calls": 2,
+      "success": 1,
+      "fail": 1
+    },
+    "copy_file": {
+      "calls": 2,
+      "success": 1,
+      "fail": 1
+    },
+    "run_command": {
+      "calls": 2,
+      "success": 1,
+      "fail": 1
+    }
+  },
+  "updated": "2026-09-05T18:07:22.201823"
+}

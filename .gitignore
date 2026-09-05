@@ -13,3 +13,5 @@ stress/_tmp_*.json
 
 # 运行产物
 *.log
+assets/_sandbox/
+assets/stats_gui.json

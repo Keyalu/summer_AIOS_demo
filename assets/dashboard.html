@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>组4 · 工具调用审计看板</title>
+<style>
+:root{--ink:#0f172a;--sub:#64748b;--line:#e2e8f0;--blue:#2563eb;--blue-bg:#dbeafe;
+--green:#16a34a;--green-bg:#dcfce7;--red:#dc2626;--red-bg:#fee2e2;--amber:#d97706}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:#f8fafc;color:var(--ink);padding:28px}
+.wrap{max-width:1100px;margin:0 auto}
+h1{font-size:22px}h1 small{font-size:13px;color:var(--sub);font-weight:400;margin-left:10px}
+.meta{color:var(--sub);font-size:12.5px;margin:6px 0 22px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:26px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.kpi .v{font-size:26px;font-weight:700}
+.kpi .l{font-size:12px;color:var(--sub);margin-top:4px}
+.ok{color:var(--green)}.bad{color:var(--red)}.bl{color:var(--blue)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:22px}
+.panel h2{font-size:15px;margin-bottom:12px}
+.bar-row{display:grid;grid-template-columns:170px 1fr 84px;align-items:center;gap:10px;margin:7px 0;font-size:12.5px}
+.bar-track{background:#f1f5f9;border-radius:6px;height:18px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;background:var(--blue-bg);border-right:3px solid var(--blue)}
+.fail .bar-fill{background:var(--red-bg);border-right-color:var(--red)}
+.bar-num{color:var(--sub);text-align:right}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--sub);font-weight:600;font-size:12px;white-space:nowrap}
+tr:hover td{background:#f8fafc}
+.chip{display:inline-block;padding:1px 9px;border-radius:99px;font-size:11.5px;font-weight:600}
+.chip.ok{background:var(--green-bg);color:var(--green)}.chip.bad{background:var(--red-bg);color:var(--red)}
+code{font-family:Consolas,monospace;font-size:11.5px;color:#475569;word-break:break-all}
+td:first-child code{white-space:nowrap;font-size:11px}
+.err{color:var(--red)}
+.note{font-size:12px;color:var(--sub);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>组4 · 工具调用审计看板<small>Tools 调用统计可视化</small></h1>
+<div class="meta">数据文件：assets/stats_demo.json ｜ 生成时间：2026-09-05T18:07:22.201823 ｜ 组5 可直接消费本页所依据的 JSON，无需 import 任何 Python 代码</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="panel"><h2>按工具聚合（调用 / 成功 / 失败）</h2><div id="bars"></div></div>
+
+<div class="panel"><h2>失败事件分类（按 error 前缀）</h2><div id="fails"></div><div class="note">权限拦截发生在统计之前（调度层拒绝），因此不产生记录 —— 这是与组3定死的契约。</div></div>
+
+<div class="panel"><h2>调用明细时间线（13 条）</h2>
+<table><thead><tr><th>时间</th><th>工具</th><th>结果</th><th>耗时</th><th>参数 / 错误</th></tr></thead>
+<tbody id="rows"></tbody></table></div>
+
+<div class="note">重新生成：修改演示内容后运行 <code>python tools/gen_dashboard.py</code>；联调演示可用 GUI（gui/server.py）实时产生新数据。</div>
+</div>
+<script>
+const DATA = {"records": [{"time": "2026-09-05T18:07:21.982328", "tool": "write_file", "params": {"path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/readme.md", "content": "demo\n"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:21.984283", "tool": "write_file", "params": {"path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/a.md", "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:21.985256", "tool": "write_file", "params": {"path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/b.md", "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:21.987242", "tool": "write_file", "params": {"path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/c.md", "content": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:21.989207", "tool": "list_directory", "params": {"path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:21.991158", "tool": "read_file", "params": {"path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/readme.md"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:21.994904", "tool": "copy_file", "params": {"src": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/readme.md", "dest": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/docs/readme_copy.md"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:22.194981", "tool": "run_command", "params": {"cmd": "echo hello-from-gui-demo"}, "success": true, "duration_ms": 32.0}, {"time": "2026-09-05T18:07:22.196945", "tool": "list_directory", "params": {"path": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox"}, "success": true, "duration_ms": 0.0}, {"time": "2026-09-05T18:07:22.197918", "tool": "copy_file", "params": {"src": "nonexistent__x.bin", "dest": "C:\\Users\\keyal\\Desktop\\AIOS\\111\\tools\\..\\assets\\_sandbox/d.bin"}, "success": false, "duration_ms": 0.0, "error": "源文件不存在: C:\\Users\\keyal\\Desktop\\AIOS\\111\\nonexistent__x.bin"}, {"time": "2026-09-05T18:07:22.199871", "tool": "write_file", "params": {"path": "/etc/demo_block_test.txt", "content": "x"}, "success": false, "duration_ms": 0.0, "error": "拒绝写入受保护路径: \\etc\\demo_block_test.txt (受保护路径: /etc)"}, {"time": "2026-09-05T18:07:22.200847", "tool": "run_command", "params": {"cmd": "rm -rf /"}, "success": false, "duration_ms": 0.0, "error": "拒绝执行: 包含危险关键词: rm -rf"}, {"time": "2026-09-05T18:07:22.201823", "tool": "read_file", "params": {}, "success": false, "duration_ms": 0.0, "error": "参数错误: 缺少必需参数: path"}], "counters": {"write_file": {"calls": 5, "success": 4, "fail": 1}, "list_directory": {"calls": 2, "success": 2, "fail": 0}, "read_file": {"calls": 2, "success": 1, "fail": 1}, "copy_file": {"calls": 2, "success": 1, "fail": 1}, "run_command": {"calls": 2, "success": 1, "fail": 1}}, "updated": "2026-09-05T18:07:22.201823"};
+
+function kpi(v,l,cls){return `<div class="kpi"><div class="v ${cls||""}">${v}</div><div class="l">${l}</div></div>`}
+
+const recs=DATA.records||[], counters=DATA.counters||{};
+let total=0,okN=0,failN=0,dur=0;
+recs.forEach(r=>{total++;r.success?okN++:failN++;dur+=r.duration_ms||0});
+const rate=total?(100*okN/total).toFixed(1):"0.0";
+document.getElementById("kpis").innerHTML=
+ kpi(total,"总调用次数","bl")+kpi(okN,"成功","ok")+kpi(failN,"失败",failN?"bad":"")+
+ kpi(rate+"%","成功率",parseFloat(rate)>=90?"ok":"bad")+kpi((dur/Math.max(total,1)).toFixed(1)+" ms","平均耗时");
+
+const tools=Object.keys(counters).sort((a,b)=>counters[b].calls-counters[a].calls);
+const maxN=Math.max(1,...tools.map(t=>counters[t].calls));
+document.getElementById("bars").innerHTML=tools.map(t=>{
+ const c=counters[t],w=(100*c.calls/maxN).toFixed(1);
+ const fail=c.fail>0;
+ return `<div class="bar-row${fail?" fail":""}"><span>${t}</span>
+ <div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div>
+ <span class="bar-num">${c.calls} 次 · 败 ${c.fail}</span></div>`}).join("");
+
+const errCount={};
+recs.filter(r=>!r.success).forEach(r=>{
+ const p=(r.error||"未知错误").split(":")[0].split("，")[0].split("（")[0].trim();
+ errCount[p]=(errCount[p]||0)+1});
+const errs=Object.entries(errCount).sort((a,b)=>b[1]-a[1]);
+const maxE=Math.max(1,...errs.map(e=>e[1]));
+document.getElementById("fails").innerHTML=errs.length?errs.map(([p,n])=>{
+ const w=(100*n/maxE).toFixed(1);
+ return `<div class="bar-row fail"><span>${p}</span>
+ <div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div>
+ <span class="bar-num">${n} 次</span></div>`}).join("")
+ :'<div class="note">本次会话没有失败事件。</div>';
+
+document.getElementById("rows").innerHTML=recs.slice().reverse().map(r=>`
+ <tr><td><code>${(r.time||"").replace("T"," ").slice(0,19)}</code></td>
+ <td><b>${r.tool}</b></td>
+ <td><span class="chip ${r.success?"ok":"bad"}">${r.success?"成功":"失败"}</span></td>
+ <td>${r.duration_ms} ms</td>
+ <td>${r.success?`<code>${esc(JSON.stringify(r.params))}</code>`
+   :`<span class="err">${esc(r.error||"")}</span>`}</td></tr>`).join("");
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+</script>
+</body>
+</html>
