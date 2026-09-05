@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# pytest
+.pytest_cache/
+
+# 压测临时数据（benchmark 运行时自动重新生成）
+stress/_tmp_*.json
+
+# 运行产物
+*.log

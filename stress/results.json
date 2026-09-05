@@ -1,0 +1,23 @@
+[
+  {
+    "id": "B1",
+    "scenario": "[实装后] list_directory 10000 文件(scandir+分页)",
+    "time_s": 0.051,
+    "ops": 10000,
+    "throughput_ops_per_s": 197721.1,
+    "old_s": 108.55,
+    "speedup_x": 2146.3,
+    "page2_ms": 47.8,
+    "error": null
+  },
+  {
+    "id": "B2",
+    "scenario": "[实装后] find_duplicate_files 2000 文件(size预分组)",
+    "time_s": 0.533,
+    "ops": 2000,
+    "hash_all_s": 7.341,
+    "speedup_x": 13.8,
+    "hashed": 100,
+    "error": null
+  }
+]
